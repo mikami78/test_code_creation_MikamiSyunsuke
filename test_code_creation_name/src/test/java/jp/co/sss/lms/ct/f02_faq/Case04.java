@@ -41,6 +41,7 @@ public class Case04 {
 	private static final String url = "http://localhost:8080/lms/";
 	private static final String loginTitle = "ログイン | LMS";
 	private static final String helpTitle = "ヘルプ | LMS";
+	private static final String faqTitle = "よくある質問 | LMS";
 
 	@Test
 	@Order(1)
@@ -53,7 +54,7 @@ public class Case04 {
 		getEvidence(new Object() {
 		});
 
-		// ログイン画面のタイトルを確認させる
+		// ログインページのタイトルを確認させる
 		assertEquals(loginTitle, webDriver.getTitle());
 	}
 
@@ -95,17 +96,24 @@ public class Case04 {
 	@Order(3)
 	@DisplayName("テスト03 上部メニューの「ヘルプ」リンクからヘルプ画面に遷移")
 	void test03() {
-		final WebElement functionButton = webDriver.findElement(By.cssSelector("a [href='#'].dropdown-toggle"));
+		// 要素を取得させる
+		final WebElement functionButton = webDriver.findElement(By.cssSelector("a[href='#'].dropdown-toggle"));
 		final WebElement helpButton = webDriver.findElement(By.cssSelector("a[href='/lms/help']"));
 
+		// 機能ドロップダウンリストをクリック
 		functionButton.click();
+		// ヘルプボタンをクリック
 		helpButton.click();
+
+		// ヘルプページが表示されるまで待つ
+		new WebDriverWait(webDriver, Duration.ofSeconds(5))
+				.until(ExpectedConditions.titleIs(helpTitle));
 
 		// エビデンス(スクリーンショット)を取る
 		getEvidence(new Object() {
 		});
 
-		// ログイン画面のタイトルを確認させる
+		// ヘルプページのタイトルを確認させる
 		assertEquals(helpTitle, webDriver.getTitle());
 	}
 
@@ -113,8 +121,33 @@ public class Case04 {
 	@Order(4)
 	@DisplayName("テスト04 「よくある質問」リンクからよくある質問画面を別タブに開く")
 	void test04() {
-		// TODO ここに追加
-		// TODO ここに追加
+		// 現在のタブのウィンドウハンドルを取得する
+		String currentWindow = webDriver.getWindowHandle();
+
+		// 要素を取得させる
+		final WebElement faqLink = webDriver.findElement(By.cssSelector("a[href='/lms/faq']"));
+
+		// faqリンクをクリック
+		faqLink.click();
+
+		// ウィンドウタブが2つになるまで待つ
+		new WebDriverWait(webDriver, Duration.ofSeconds(5))
+				.until(ExpectedConditions.numberOfWindowsToBe(2));
+
+		// 現在のタブ以外のハンドルを取得して切り替える
+		for (String newWindow : webDriver.getWindowHandles()) {
+			if (!newWindow.equals(currentWindow)) {
+				webDriver.switchTo().window(newWindow);
+				break;
+			}
+		}
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
+
+		// 別タブで開かれたよくある質問ページのタイトルを確認させる
+		assertEquals(faqTitle, webDriver.getTitle());
 	}
 
 }
