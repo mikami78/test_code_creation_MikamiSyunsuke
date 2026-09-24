@@ -114,6 +114,7 @@ public class Case04 {
 	@DisplayName("テスト04 「よくある質問」リンクからよくある質問画面を別タブに開く")
 	void test04() {
 		// TODO ここに追加
+		// TODO ここに追加
 	}
 
 }
