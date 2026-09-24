@@ -54,7 +54,7 @@ public class Case04 {
 		getEvidence(new Object() {
 		});
 
-		// ログインページのタイトルを確認させる
+		// ログイン画面のタイトルを確認させる
 		assertEquals(loginTitle, webDriver.getTitle());
 	}
 
@@ -105,7 +105,7 @@ public class Case04 {
 		// ヘルプボタンをクリック
 		helpButton.click();
 
-		// ヘルプページが表示されるまで待つ
+		// ヘルプ画面が表示されるまで待つ
 		new WebDriverWait(webDriver, Duration.ofSeconds(5))
 				.until(ExpectedConditions.titleIs(helpTitle));
 
@@ -113,7 +113,7 @@ public class Case04 {
 		getEvidence(new Object() {
 		});
 
-		// ヘルプページのタイトルを確認させる
+		// ヘルプ画面のタイトルを確認させる
 		assertEquals(helpTitle, webDriver.getTitle());
 	}
 
@@ -146,7 +146,7 @@ public class Case04 {
 		getEvidence(new Object() {
 		});
 
-		// 別タブで開かれたよくある質問ページのタイトルを確認させる
+		// 別タブで開かれたよくある質問画面のタイトルを確認させる
 		assertEquals(faqTitle, webDriver.getTitle());
 	}
 
