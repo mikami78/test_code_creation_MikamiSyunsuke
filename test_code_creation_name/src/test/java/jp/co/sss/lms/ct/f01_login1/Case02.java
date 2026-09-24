@@ -1,6 +1,9 @@
 package jp.co.sss.lms.ct.f01_login1;
 
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
+import static org.junit.Assert.*;
+
+import java.time.Duration;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +12,10 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * 結合テスト ログイン機能①
@@ -31,18 +38,59 @@ public class Case02 {
 		closeDriver();
 	}
 
+	private static final String url = "http://localhost:8080/lms/";
+
 	@Test
 	@Order(1)
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
-		// TODO ここに追加
+		// 下記URLのページにアクセスさせる
+		webDriver.get(url);
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
+
+		// URLがLMSのログイン画面のURLであるかを照合させる
+		assertEquals(url, webDriver.getCurrentUrl());
 	}
 
 	@Test
 	@Order(2)
 	@DisplayName("テスト02 DBに登録されていないユーザーでログイン")
 	void test02() {
-		// TODO ここに追加
+		// 下記URLのページにアクセスさせる
+		webDriver.get(url);
+
+		// 要素を取得させる
+		final WebElement loginId = webDriver.findElement(By.id("loginId"));
+		final WebElement password = webDriver.findElement(By.id("password"));
+		final WebElement loginButton = webDriver.findElement(By.cssSelector("input[type='submit']"));
+		final By errorMessage = By.cssSelector("span.help-inline.error");
+
+		// ログインIDフォームをクリアしてからログインIDを入力する
+		loginId.clear();
+		loginId.sendKeys("test-user");
+
+		// パスワードフォームをクリアしてからパスワードを入力する
+		password.clear();
+		password.sendKeys("test-password");
+
+		// ログインボタンをクリック
+		loginButton.click();
+
+		// ログインエラーメッセージが画面上に表示されるまで待つ
+		final WebElement errorElement = new WebDriverWait(
+				webDriver, Duration.ofSeconds(5))
+						.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
+
+		// ログイン失敗のメッセージが画面上に表示されているかを確認させる
+		assertTrue(errorElement.getText().contains("ログインに失敗しました。"));
+
 	}
 
 }
