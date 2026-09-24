@@ -37,23 +37,8 @@ public class Case01 {
 
 	@Test
 	@Order(1)
-	@DisplayName("テスト01 トップページURLでアクセス")
+	@DisplayName("テスト01 ログイン画面のタイトルの確認")
 	void test01() {
-		// 下記URLのページにアクセスさせる
-		webDriver.get(url);
-
-		// エビデンス(スクリーンショット)を取る
-		getEvidence(new Object() {
-		});
-
-		// URLがLMSのログイン画面のURLであるかを照合させる
-		assertEquals(url, webDriver.getCurrentUrl());
-	}
-
-	@Test
-	@Order(2)
-	@DisplayName("テスト02 ログイン画面のタイトルの確認")
-	void test02() {
 		// 下記URLのページにアクセスさせる
 		webDriver.get(url);
 

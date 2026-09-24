@@ -59,9 +59,6 @@ public class Case02 {
 	@Order(2)
 	@DisplayName("テスト02 DBに登録されていないユーザーでログイン")
 	void test02() {
-		// 下記URLのページにアクセスさせる
-		webDriver.get(url);
-
 		// 要素を取得させる
 		final WebElement loginId = webDriver.findElement(By.id("loginId"));
 		final WebElement password = webDriver.findElement(By.id("password"));
