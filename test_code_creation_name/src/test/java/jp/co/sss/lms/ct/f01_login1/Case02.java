@@ -39,10 +39,11 @@ public class Case02 {
 	}
 
 	private static final String url = "http://localhost:8080/lms/";
+	private static final String title = "ログイン | LMS";
 
 	@Test
 	@Order(1)
-	@DisplayName("テスト01 トップページURLでアクセス")
+	@DisplayName("テスト01 ログイン画面のタイトルの確認")
 	void test01() {
 		// 下記URLのページにアクセスさせる
 		webDriver.get(url);
@@ -51,8 +52,8 @@ public class Case02 {
 		getEvidence(new Object() {
 		});
 
-		// URLがLMSのログイン画面のURLであるかを照合させる
-		assertEquals(url, webDriver.getCurrentUrl());
+		// ログイン画面のタイトルを確認させる
+		assertEquals(title, webDriver.getTitle());
 	}
 
 	@Test
