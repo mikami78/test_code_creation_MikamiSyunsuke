@@ -156,24 +156,26 @@ public class Case06 {
 	@Order(5)
 	@DisplayName("テスト05 カテゴリ検索で該当カテゴリの検索結果だけ表示")
 	void test05() {
-		// 要素を取得させる
-		final WebElement categorySearch = webDriver
-				.findElement(By.cssSelector("a[href='/lms/faq?frequentlyAskedQuestionCategoryId=2']"));
-		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+		// カテゴリ検索リンクを取得する
+		final WebElement categorySearch = webDriver.findElement(
+				By.cssSelector("a[href='/lms/faq?frequentlyAskedQuestionCategoryId=2']"));
+		final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
 
-		// カテゴリ検索リンクをクリック
+		// カテゴリ検索リンクをクリックする
 		categorySearch.click();
 
 		// 検索結果が1件以上表示されるまで待機する
 		final By searchResults = By.cssSelector("table tbody tr");
 		wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(searchResults, 0));
 
-		// カテゴリーIDが2の検索結果が画面上に表示されているかを確認する
-		assertTrue(webDriver.getCurrentUrl()
-				.contains("frequentlyAskedQuestionCategoryId=2"));
 		WebDriverUtils.scrollBy("700");
 
-		// エビデンス(スクリーンショット)を取る
+		// カテゴリIDが2のFAQの質問文が表示されていることを確認する
+		assertTrue(webDriver.getPageSource().contains("セルフ・キャリアドック制度とは何か"));
+		assertTrue(webDriver.getPageSource().contains("事業所が変わった場合、何かしら手続きをする必要がありますか？"));
+		assertTrue(webDriver.getPageSource().contains("助成金書類の作成方法が分かりません"));
+
+		// エビデンス（スクリーンショット）を取る
 		getEvidence(new Object() {
 		});
 	}
