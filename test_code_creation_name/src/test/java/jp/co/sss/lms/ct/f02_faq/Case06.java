@@ -1,6 +1,9 @@
 package jp.co.sss.lms.ct.f02_faq;
 
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
+import static org.junit.Assert.*;
+
+import java.time.Duration;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +12,12 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import jp.co.sss.lms.ct.util.WebDriverUtils;
 
 /**
  * 結合テスト よくある質問機能
@@ -31,46 +40,175 @@ public class Case06 {
 		closeDriver();
 	}
 
+	private static final String url = "http://localhost:8080/lms/";
+	private static final String loginTitle = "ログイン | LMS";
+	private static final String helpTitle = "ヘルプ | LMS";
+	private static final String faqTitle = "よくある質問 | LMS";
+
 	@Test
 	@Order(1)
-	@DisplayName("テスト01 トップページURLでアクセス")
+	@DisplayName("テスト01 ログイン画面のタイトルの確認")
 	void test01() {
-		// TODO ここに追加
+		// 下記URLのページにアクセスさせる
+		webDriver.get(url);
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
+
+		// ログイン画面のタイトルを確認させる
+		assertEquals(loginTitle, webDriver.getTitle());
 	}
 
 	@Test
 	@Order(2)
 	@DisplayName("テスト02 初回ログイン済みの受講生ユーザーでログイン")
 	void test02() {
-		// TODO ここに追加
+		// 要素を取得させる
+		final WebElement loginId = webDriver.findElement(By.id("loginId"));
+		final WebElement password = webDriver.findElement(By.id("password"));
+		final WebElement loginButton = webDriver.findElement(By.cssSelector("input[type='submit']"));
+		final By welcomeMessage = By.cssSelector("small");
+
+		// ログインIDフォームをクリアしてからログインIDを入力する
+		loginId.clear();
+		loginId.sendKeys("StudentAA01");
+
+		// パスワードフォームをクリアしてからパスワードを入力する
+		password.clear();
+		password.sendKeys("StudentAA001");
+
+		// ログインボタンをクリック
+		loginButton.click();
+
+		// ログインメッセージが画面上に表示されるまで待つ
+		final WebElement loginElement = new WebDriverWait(
+				webDriver, Duration.ofSeconds(5))
+						.until(ExpectedConditions.visibilityOfElementLocated(welcomeMessage));
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
+
+		// ログインメッセージが画面上に表示されているかを確認させる
+		assertTrue(loginElement.getText().contains("ようこそ受講生ＡＡ１さん"));
 	}
 
 	@Test
 	@Order(3)
 	@DisplayName("テスト03 上部メニューの「ヘルプ」リンクからヘルプ画面に遷移")
 	void test03() {
-		// TODO ここに追加
+		// 要素を取得させる
+		final WebElement functionButton = webDriver.findElement(By.cssSelector("a[href='#'].dropdown-toggle"));
+		final WebElement helpButton = webDriver.findElement(By.cssSelector("a[href='/lms/help']"));
+
+		// 機能ドロップダウンリストをクリック
+		functionButton.click();
+		// ヘルプボタンをクリック
+		helpButton.click();
+
+		// ヘルプ画面が表示されるまで待つ
+		new WebDriverWait(webDriver, Duration.ofSeconds(5))
+				.until(ExpectedConditions.titleIs(helpTitle));
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
+
+		// ヘルプ画面のタイトルを確認させる
+		assertEquals(helpTitle, webDriver.getTitle());
 	}
 
 	@Test
 	@Order(4)
 	@DisplayName("テスト04 「よくある質問」リンクからよくある質問画面を別タブに開く")
 	void test04() {
-		// TODO ここに追加
+		// 現在のタブのウィンドウハンドルを取得する
+		String currentWindow = webDriver.getWindowHandle();
+
+		// 要素を取得させる
+		final WebElement faqLink = webDriver.findElement(By.cssSelector("a[href='/lms/faq']"));
+
+		// faqリンクをクリック
+		faqLink.click();
+
+		// ウィンドウタブが2つになるまで待つ
+		new WebDriverWait(webDriver, Duration.ofSeconds(5))
+				.until(ExpectedConditions.numberOfWindowsToBe(2));
+
+		// 現在のタブ以外のハンドルを取得して切り替える
+		for (String newWindow : webDriver.getWindowHandles()) {
+			if (!newWindow.equals(currentWindow)) {
+				webDriver.switchTo().window(newWindow);
+				break;
+			}
+		}
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
+
+		// 別タブで開かれたよくある質問画面のタイトルを確認させる
+		assertEquals(faqTitle, webDriver.getTitle());
 	}
 
 	@Test
 	@Order(5)
 	@DisplayName("テスト05 カテゴリ検索で該当カテゴリの検索結果だけ表示")
 	void test05() {
-		// TODO ここに追加
+		// 要素を取得させる
+		final WebElement categorySearch = webDriver
+				.findElement(By.cssSelector("a[href='/lms/faq?frequentlyAskedQuestionCategoryId=2']"));
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+
+		// カテゴリ検索リンクをクリック
+		categorySearch.click();
+
+		// 検索結果が1件以上表示されるまで待機する
+		final By searchResults = By.cssSelector("table tbody tr");
+		wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(searchResults, 0));
+
+		// カテゴリーIDが2の検索結果が画面上に表示されているかを確認する
+		assertTrue(webDriver.getCurrentUrl()
+				.contains("frequentlyAskedQuestionCategoryId=2"));
+		WebDriverUtils.scrollBy("700");
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
 	}
 
 	@Test
 	@Order(6)
 	@DisplayName("テスト06 検索結果の質問をクリックしその回答を表示")
 	void test06() {
-		// TODO ここに追加
+		// 要素を取得させる
+		final By searchResults = By.cssSelector("table tbody tr");
+		final By question = By.cssSelector("dt.mb10");
+		final By answer = By.cssSelector("dd.fs18");
+
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(searchResults, 0));
+
+		// 各回答が表示されることを確認する
+		for (WebElement faqRow : webDriver.findElements(searchResults)) {
+			WebDriverUtils.scrollBy("700");
+
+			WebElement questionElement = faqRow.findElement(question);
+
+			// 上から順に質問を展開する
+			wait.until(ExpectedConditions.elementToBeClickable(questionElement)).click();
+
+			// 回答が表示されるまで待機する
+			WebElement answerElement = faqRow.findElement(answer);
+			wait.until(ExpectedConditions.visibilityOf(answerElement));
+
+			assertTrue(answerElement.isDisplayed());
+		}
+
+		// エビデンス(スクリーンショット)を取る
+		getEvidence(new Object() {
+		});
 	}
 
 }
